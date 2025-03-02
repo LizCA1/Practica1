@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Contraseñas Seguras</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.241.0/lucide.min.js"></script>
+</head>
+<body class="bg-gray-900 text-white flex items-center justify-center h-screen">
+    <div class="w-full max-w-md bg-gray-800 p-6 rounded-2xl shadow-xl">
+        <h1 class="text-xl font-bold mb-4 text-center">Generador de Contraseñas</h1>
+        <label class="block mb-2">Longitud:</label>
+        <input id="length" type="number" value="16" min="8" class="w-full p-2 mb-4 rounded bg-gray-700 text-white">
+        <div class="mb-4">
+            <label class="flex items-center"><input type="checkbox" id="numbers" checked> Números</label>
+            <label class="flex items-center"><input type="checkbox" id="uppercase" checked> Mayúsculas</label>
+            <label class="flex items-center"><input type="checkbox" id="lowercase" checked> Minúsculas</label>
+            <label class="flex items-center"><input type="checkbox" id="symbols" checked> Símbolos</label>
+        </div>
+        <button onclick="generatePassword()" class="w-full bg-blue-600 p-2 rounded-lg">Generar</button>
+        <div class="relative mt-4">
+            <input id="password" class="w-full p-2 rounded bg-gray-700 text-white" readonly>
+            <button onclick="copyPassword()" class="absolute right-2 top-2">📋</button>
+        </div>
+    </div>
+    <script>
+        function generatePassword() {
+            const length = document.getElementById('length').value;
+            const numbers = document.getElementById('numbers').checked ? '0123456789' : '';
+            const uppercase = document.getElementById('uppercase').checked ? 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' : '';
+            const lowercase = document.getElementById('lowercase').checked ? 'abcdefghijklmnopqrstuvwxyz' : '';
+            const symbols = document.getElementById('symbols').checked ? '!@#$%^&*()_+[]{}|;:,.<>?' : '';
+            const allChars = numbers + uppercase + lowercase + symbols;
+            let password = '';
+            if (!allChars) return;
+            const cryptoArray = new Uint32Array(length);
+            window.crypto.getRandomValues(cryptoArray);
+            for (let i = 0; i < length; i++) {
+                password += allChars[cryptoArray[i] % allChars.length];
+            }
+            document.getElementById('password').value = password;
+        }
+        function copyPassword() {
+            const passwordField = document.getElementById('password');
+            passwordField.select();
+            document.execCommand('copy');
+            alert('Contraseña copiada');
+        }
+    </script>
+</body>
+</html>
